@@ -14,8 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $amount = $conn->real_escape_string(strip_tags(addslashes($_POST['momo_amount'])));
   $trans_id = "default";
 
+  $datetime = new DateTime();
+  $newDate = $datetime->format('d-m-Y');
+
   // Lưu nội dung và thông tin liên quan vào cơ sở dữ liệu
-  $query = "INSERT INTO momo_trans (username, amount, trans_id, content) VALUES ('$username', '$amount', '$trans_id', '$content')";
+  $query = "INSERT INTO momo_trans (username, amount, trans_id, content,date) VALUES ('$username', '$amount', '$trans_id', '$content','$newDate')";
   if ($conn->query($query) === TRUE) {
     // Nếu lưu thành công, trả về nội dung cho phần frontend xử lý
     echo $content;

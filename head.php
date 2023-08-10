@@ -145,7 +145,7 @@ include_once 'set.php';
          <?php } else { ?>
             <?php if ($_coin == null) $_coin = 0 ?>
             <a class="btn btn-outline-primary" href="./profile.php">
-               <span><?php echo ($_username); ?> - <?php echo number_format($_coin); ?> Coin - tiền affilate: 20.00000000<?php echo number_format($_coin_affilate); ?></span>
+               <span><?php echo ($_username); ?> - <?php echo number_format($_coin); ?> Coin - tiền affilate: <?php echo number_format($_coin_affilate); ?>VND</span>
             </a>
          <?php } ?>
       </div>

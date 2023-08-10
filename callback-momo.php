@@ -1,6 +1,7 @@
 <?php
 include(__DIR__ . "/momo/config.php");
 include(__DIR__ . "/api/config.php");
+include_once 'set.php';
 
 $url = "https://api.sieuthicode.net/historyapimomo/{$apikeymomo}";
 
@@ -58,18 +59,33 @@ if ($response !== false) {
       $responseData[] = $transactionData;
 
       $result = $conn->query("SELECT * FROM momo_trans WHERE status = 0 AND content = '{$comment}'");
+      $row = $result->fetch_array(MYSQLI_ASSOC);
 
-      $resultReferal = $conn->query("SELECT user_referral FROM account WHERE username = '{$row['username']}' ");
+
+    print_r($row) ;
+    // echo $amount;
+
+      $resultReferal = $conn->query("SELECT * FROM account WHERE username = '$_user' ");
+     
+      $referal = $resultReferal->fetch_array(MYSQLI_ASSOC);
+
+      // echo $row['username'];
+
+    
+
+      print_r($referal) ;
 
       if ($result->num_rows > 0) {
-        $row = $result->fetch_array(MYSQLI_ASSOC);
+        // $row = $result->fetch_array(MYSQLI_ASSOC);
         if ($amount >= $row['amount']) {
           $price = $amount;
 
-          $percentAffilate = $price * 15%
+          $percentAffilate = $price * (15/100);
           $conn->query("UPDATE account SET vnd = vnd + {$price}, tongnap = tongnap + {$price} WHERE username = '{$row['username']}'");
-          if($resultReferal && $resultReferal = ''){
-            $conn->query("UPDATE account SET coin_affilate = coin_affilate + {$percentAffilate} WHERE referral_code = '{$resultReferal}'");
+          if($referal && $referal != ''){
+
+            echo "duong";
+            $conn->query("UPDATE account SET coin_affilate = coin_affilate + {$percentAffilate} WHERE referral_code = '{$referal['user_referral']}'");
 
           }
 

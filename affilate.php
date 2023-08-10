@@ -1,6 +1,7 @@
 <?php
 include_once 'head.php';
 include_once 'set.php';
+include(__DIR__ . "/api/config.php");
 if ($_login == null) {
     header("location:/user");
 }
@@ -22,6 +23,15 @@ $_tcoin = isset($_tcoin) ? $_tcoin : 0;
     <script src="../../../cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="stylesheet" href="../../../cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <script src="../../../getbootstrap.com/docs/5.0/dist/js/bootstrap.min.js"></script>
+
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/dataTables.bootstrap5.min.css">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <style>
     @import url(./css/main.css);
@@ -137,13 +147,13 @@ $_tcoin = isset($_tcoin) ? $_tcoin : 0;
 
     }
 
-    .form-pay {
+    .form-pay,.form-change {
         border: 3px solid #ffffff;
         padding: 10px;
 
     }
 
-    .form-hidden {
+    .form-hidden , .changeCoin-hidden{
         display: none;
     }
 
@@ -154,29 +164,63 @@ $_tcoin = isset($_tcoin) ? $_tcoin : 0;
 
 <?php
 $refer = _fetch("SELECT COUNT(username) FROM account WHERE user_referral='$_referralCode'");
-if(isset($_POST["nameAtm"]) && isset($_POST["numberAtm"]) ){
+
+/// XỬ LÝ RÚT TIỀN
+if (isset($_POST["nameAtm"]) && isset($_POST["numberAtm"]) && isset_sql($_POST['banks'])) {
     $number_atm = isset_sql($_POST['numberAtm']);
     $name_atm = isset_sql($_POST['nameAtm']);
+    $bank = isset_sql($_POST['banks']);
+    $datetime = new DateTime();
+    $newDate = $datetime->format('d-m-Y');
 
-// echo $name_atm;
-// echo $number_atm;
-try {
+    try {
 
-    $user_arr = _fetch("SELECT * FROM account Where username='$_user'");
+        $txt = _insert('payment', "number_atm,name_atm,amount,bank,date", "'$number_atm','$name_atm','$_coin_affilate','$bank','$newDate'");
+        $kiemtra = _query($txt);
 
 
-	// perform some task
-    $txt = _insert('payment', "number_atm,name_atm,amount", "'$number_atm','$name_atm','$_coin_affilate'");
+        if ($kiemtra) {
+            echo '
+            <script type="text/javascript">
+            
+            $(document).ready(function(){
+            
+              swal({
+                    title: "Thành công",
+                    text: "Tiền sẽ được chuyển trong 1-2 ngày",
+                    type: "success",
+                    confirmButtonText: "OK",
+              })
+            });
+            
+            </script>
+            ';
+        }
 
-    echo $txt;
-} catch (Exception $ex) {
-	// jump to this part
-	// if an exception occurred
-    echo $ex;
+
+
+    } catch (Exception $ex) {
+        // jump to this part
+        // if an exception occurred
+        echo $ex;
+    }
+
+
 }
 
 
+
+// XỬ LÝ ĐỔI TIỀN THÀNH COIN
+if(isset($_POST["username"]) && isset($_POST["changecoin"])){
+
+    $username = isset_sql($_POST['username']);
+    $price =  isset_sql($_POST['changecoin']);
+
+    $conn->query("UPDATE account SET vnd = vnd + {$price}, tongnap = tongnap + {$price} WHERE username = '{$row['username']}'");
+
+
 }
+
 
 
 
@@ -294,18 +338,29 @@ function get_user_ip()
                                     <script type="text/javascript" language="javascript">
                                         $(document).ready(function () {
                                             $(".btn-pay").click(function () {
+                                                $('.form-change').addClass('changeCoin-hidden')
                                                 $('.form-pay').removeClass('form-hidden')
                                             });
                                         });
                                     </script>
 
-                                    <button type="button" class="btn btn-warning fw-bold">Đổi coin</button>
+                                    <button type="button" class="btn btn-warning fw-bold btn-change">Đổi coin</button>
+
+                                    <script type="text/javascript" language="javascript">
+                                        $(document).ready(function () {
+                                            $(".btn-change").click(function () {
+                                                $('.form-pay').addClass('form-hidden')
+                                                $('.form-change').removeClass('changeCoin-hidden')
+                                            });
+                                        });
+                                    </script>
                                 </td>
                             </tr>
 
                         </tbody>
                     </table>
 
+<!-- form rút tiền -->
                     <form class="form-pay form-hidden" method="POST">
                         <div class="text-center mb-2">
                             <img src="/img/logo.png" alt="" width="200">
@@ -313,16 +368,34 @@ function get_user_ip()
                         <h2 class="h3 mb-3 fw-normal text-center">Vui Lòng Nhập Tài Khoản Ngân Hàng</h2>
                         <!-- <input type="hidden" name="_token" value="JEGpj39vMoqzUAPDoHWTY8Y4jJiy4t0mhPST9nds"> -->
                         <div class="account-ATM row mb-1">
-                            <div class="col-7 number-atm" style="padding-right:10px">
+                            <div class="col-6 number-atm" style="padding-right:10px">
                                 <label class="">Số tài khoản </label>
                                 <input type="number" class="form-control" placeholder="Số tài khoản" required=""
-                                    name="numberAtm">
+                                    name="numberAtm" value="">
                             </div>
-                            <div class="col-5 name-atm" style="padding-left:10px">
+                            <div class="col-3 name-atm" style="padding-left:10px">
                                 <label class="">Tên chủ tài khoản</label>
                                 <input type="text" class="form-control" placeholder="Tên trên thẻ" required=""
-                                    name="nameAtm">
+                                    name="nameAtm" value="">
                             </div>
+
+
+
+                            <div class="col-3 name-atm" style="padding-left:10px">
+                            <label class="">Chọn ngân hàng </label>
+                                <select class="form-select" aria-label="Default select example" name="banks" required="">
+                                    <option value= "" selected>Chọn ngân hàng nhận</option>
+                                    <option value="VietcomBank">VietComBank</option>
+                                    <option value="VietTinBank">VietTinBank</option>
+                                    <option value="MB Bank">MB Bank</option>
+                                </select>
+                            </div>
+
+
+
+
+
+
                         </div>
 
                         <div class="btn-ATM row mb-1 p-2">
@@ -348,6 +421,67 @@ function get_user_ip()
                     </form>
 
 
+<!-- //form đổi tiền sang coin trong game -->
+                    <form class="form-change changeCoin-hidden" method="POST">
+                        <div class="text-center mb-2">
+                            <img src="/img/logo.png" alt="" width="200">
+                        </div>
+                        <h2 class="h3 mb-3 fw-normal text-center">Chuyển Đổi Tiền Thành Coin</h2>
+                        <!-- <input type="hidden" name="_token" value="JEGpj39vMoqzUAPDoHWTY8Y4jJiy4t0mhPST9nds"> -->
+                        <div class="account-ATM row mb-1">
+                            <div class="col-7 number-atm" style="padding-right:10px">
+                                <label class="">Tên đăng nhập </label>
+                                <input type="text" class="form-control" placeholder="Tên đăng nhập" required=""
+                                    name="username" value="">
+                            </div>
+
+
+                            <div class="col-5 name-atm" style="padding-left:10px">
+                            <label class="">Chọn thành tiền </label>
+                                <select class="form-select" aria-label="Default select example" name="chagnecoin" required="">
+                                    <option value= "" selected>Chọn mệnh giá</option>
+                                    <option value="10000">10.000</option>
+                                    <option value="20000">20.000</option>
+                                    <option value="30000">30.000</option>
+                                    <option value="50000">50.000</option>
+                                    <option value="100000">100.000</option>
+                                    <option value="200000">200.000</option>
+                                    <option value="300000">300.000</option>
+                                    <option value="500000">500.000</option>
+                                    <option value="1000000">1.000.000</option>
+                                </select>
+                            </div>
+
+
+
+
+
+
+                        </div>
+
+                        <div class="btn-ATM row mb-1 p-2">
+                            <div class="col-6 p-1">
+                                <button class="btn btn-success w-100 xacnhan" type="submit">Xác Nhận</button>
+
+
+
+                            </div>
+
+                            <div class="col-6 p-1">
+                                <button class="btn btn-primary w-100 close" type="submit">close</button>
+                                <script type="text/javascript" language="javascript">
+                                    $(document).ready(function () {
+                                        $(".close").click(function () {
+                                            $('.form-change').addClass('changeCoin-hidden')
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                    </form>
+
+
                 </div>
             </div>
         </main>
@@ -360,6 +494,10 @@ function get_user_ip()
             </div>
         </footer>
     </div>
-
+    <script src="assets/js/jquery.form.min.js"></script>
+    <script src="assets/js/clipboard.min.js"></script>
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/js/appa368.js?_=1668687096"></script>
 
 </body>
