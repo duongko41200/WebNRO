@@ -62,7 +62,7 @@ if ($response !== false) {
       $row = $result->fetch_array(MYSQLI_ASSOC);
 
 
-    print_r($row) ;
+    // print_r($row) ;
     // echo $amount;
 
       $resultReferal = $conn->query("SELECT * FROM account WHERE username = '$_user' ");
@@ -73,7 +73,7 @@ if ($response !== false) {
 
     
 
-      print_r($referal) ;
+      // print_r($referal) ;
 
       if ($result->num_rows > 0) {
         // $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -84,7 +84,7 @@ if ($response !== false) {
           $conn->query("UPDATE account SET vnd = vnd + {$price}, tongnap = tongnap + {$price} WHERE username = '{$row['username']}'");
           if($referal && $referal != ''){
 
-            echo "duong";
+            // echo "duong";
             $conn->query("UPDATE account SET coin_affilate = coin_affilate + {$percentAffilate} WHERE referral_code = '{$referal['user_referral']}'");
 
           }
@@ -103,6 +103,25 @@ if ($response !== false) {
     // Thiết lập các thông tin phản hồi HTTP
     header("Content-Type: application/json");
     echo $jsonResponseData;
+
+    echo '
+    <script type="text/javascript">
+    
+    $(document).ready(function(){
+    
+      swal({
+        title: "Thành công ",
+        text: "Bạn đã nạp tiền thành công",
+        type: "success",
+        confirmButtonText: "OK",
+      })
+    });
+    
+    </script>
+    ';
+
+
+
   } else {
     // Xử lý khi có lỗi trong phản hồi API
     echo "Lỗi trong phản hồi API";
@@ -111,3 +130,5 @@ if ($response !== false) {
   // Xử lý khi không thể lấy được phản hồi từ API
   echo "Có lỗi xảy ra khi gọi API.";
 }
+
+
