@@ -126,7 +126,7 @@ include_once 'set.php';
    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom header">
       <div class="d-flex flex-column flex-md-row align-items-center container">
          <a href="index.php" class="d-flex align-items-center text-dark text-decoration-none">
-            <img class="img-fluid" src="/img/nro.png" alt="" width="36" height="36">
+            <img class="img-fluid" src="./img/nro.png" alt="" width="36" height="36">
             <span class="fs-5 logo-text"> Ngọc Rông BALL</span>
          </a>
 

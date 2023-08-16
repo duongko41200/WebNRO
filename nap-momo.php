@@ -257,6 +257,16 @@ if ($_login == null) {
     /* Điều chỉnh chiều cao tùy ý */
   }
 
+  .momo-content--style {
+    border: #cd3a2f 1px solid;
+    cursor: pointer;
+    background-color: #cd3a2f;
+    color: #fff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 2px 3px coral;
+  }
+
   .input-copy {
     display: grid;
     grid-template-columns: 8fr 1fr;
@@ -268,6 +278,11 @@ if ($_login == null) {
     font-size: 20px;
     cursor: pointer;
     color: #f44336;
+  }
+
+  .text-style {
+    text-decoration: underline;
+    font-style: italic;
   }
 </style>
 <main class="flex-grow-1 flex-shrink-1">
@@ -288,6 +303,9 @@ if ($_login == null) {
             </a>
             <a href="nap-tien.php" class="list-group-item list-group-item-action active">
               <i class="fas fa-coins me-2"></i> Nạp MOMO
+            </a>
+            <a href="affilate.php" class="list-group-item list-group-item-action">
+              <i class="fas fa-coins me-2"></i> Affilate
             </a>
             <a href="doi-mat-khau.php" class="list-group-item list-group-item-action">
               <i class="fas fa-unlock me-2"></i> Đổi mật khẩu
@@ -341,6 +359,24 @@ if ($_login == null) {
               <input type="text" class="form-control form-control-alternative content-momo" style="background-color: #DCDCDC; font-weight: bold; color: #696969;" name="text-content" value="Lỗi..." readonly required>
               <i class="fas fa-copy btn-copy" onclick="copyTextContent()"></i>
             </div>
+
+            <p class="text-style"> (*) Cần ghi đúng nội dung chuyển khoản để có thể nạp được coin <br />
+              (*) Sau khi chuyển xong thì click nút xác nhận bên dưới để hoàn tất giao dịch
+            </p>
+
+            <a  class="momo-content momo-content--style"> Xác nhận đã chuyển khoản </a><br>
+
+            <script type="text/javascript" language="javascript">
+              $(document).ready(function() {
+                $(".momo-content--style").click(function() {
+
+                  console.log('đac nhấn xác nhận tiền')
+
+
+                  window.location.href = "http://localhost/webNro/callback-momo.php"
+                });
+              });
+            </script>
           </div>
         </form>
 
@@ -366,6 +402,7 @@ if ($_login == null) {
               if ($result === false) {
                 echo 'Lỗi truy vấn SQL: ' . $conn->error;
               } else if ($result->num_rows > 0) {
+                // header('Refresh: 1; url=./callback-momo.php');
                 while ($row = $result->fetch_assoc()) {
                   $status_text = 'Đang xử lý';
                   if ($row['status'] == 2) {
@@ -380,7 +417,7 @@ if ($_login == null) {
                                                     <td>' . $row['trans_id'] . '</td>
                                                     <td>' . number_format($row['amount']) . ' VNĐ</td>
                                                     <td>' .  $status_text . '</td>
-                                                    <td>' . date_format(new DateTime($row['date']), 'H:i:s d/m/Y ') . '</td>
+                                                    <td>' . date_format(new DateTime($row['date']), 'd/m/Y ') . '</td>
                                                 </tr>
                                                 ';
                   $stt++;

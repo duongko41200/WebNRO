@@ -104,22 +104,6 @@ if ($response !== false) {
     header("Content-Type: application/json");
     echo $jsonResponseData;
 
-    echo '
-    <script type="text/javascript">
-    
-    $(document).ready(function(){
-    
-      swal({
-        title: "Thành công ",
-        text: "Bạn đã nạp tiền thành công",
-        type: "success",
-        confirmButtonText: "OK",
-      })
-    });
-    
-    </script>
-    ';
-
 
 
   } else {
@@ -130,5 +114,8 @@ if ($response !== false) {
   // Xử lý khi không thể lấy được phản hồi từ API
   echo "Có lỗi xảy ra khi gọi API.";
 }
+?>
+
+
 
 

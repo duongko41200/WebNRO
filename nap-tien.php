@@ -245,6 +245,9 @@ if ($_login == null) {
                         <a href="nap-momo.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-coins me-2"></i> Nạp MOMO
                         </a>
+                        <a href="affilate.php" class="list-group-item list-group-item-action">
+                            <i class="fas fa-coins me-2"></i> Affilate
+                        </a>
                         <a href="doi-mat-khau.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-unlock me-2"></i> Đổi mật khẩu
                         </a>
@@ -403,14 +406,14 @@ if ($_login == null) {
                     //     });
                     // });
 
-                    $("#myform").submit(function (e) {
+                    $("#myform").submit(function(e) {
                         $("#status").html("<img src='./assets/load.gif' width='100%' />");
                         e.preventDefault();
                         $.ajax({
                             url: "./ajax/card.php",
                             type: 'post',
                             data: $("#myform").serialize(),
-                            success: function (data) {
+                            success: function(data) {
                                 $("#status").html(data);
                                 document.getElementById("myform").reset();
                                 $("#load_hs").load("./ajax/history.php");
@@ -418,7 +421,6 @@ if ($_login == null) {
                         });
 
                     });
-
                 </script><br><br>
                 <div>- Hãy Kiểm Tra Kĩ Thông Tin Trước Khi Nạp</div>
                 <div>- Nạp Sai Mệnh Giá, Thông Tin Thẻ Admin Không Chịu Trách Nhiệm.</div>
